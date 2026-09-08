@@ -1,22 +1,11 @@
-/**
- * Calls the backend soil-analysis endpoint.
- *
- * Expects the backend to return exactly:
- * {
- *   "nutrients": { "N": null, "P": 42, "K": null },
- *   "soilProperties": { "pH": 6.8, "OM": 1.9, "EC": 0.42 }
- * }
- *
- * N and K are expected to be null/absent until real trained models
- * are added on the backend — the UI renders those as
- * "Model unavailable" rather than fabricating a value.
- */
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
+
 export async function analyseSoil(imageFile, crop) {
   const formData = new FormData();
   formData.append("image", imageFile);
   formData.append("crop", crop);
 
-  const response = await fetch("/api/analyse-soil", {
+  const response = await fetch(`${API_BASE_URL}/api/analyse-soil`, {
     method: "POST",
     body: formData,
   });
@@ -30,7 +19,7 @@ export async function analyseSoil(imageFile, crop) {
       // response wasn't JSON — ignore
     }
     throw new Error(
-      detail || `Analysis failed (HTTP ${response.status}). Is the Flask backend running?`
+      detail || `Analysis failed (HTTP ${response.status}).`
     );
   }
 
